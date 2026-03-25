@@ -33,25 +33,6 @@ struct ContentView: View {
 
     @ViewBuilder
     var mainView: some View {
-        // Reset button
-        HStack {
-            Text(store.hourOffset != 0 ? offsetLabel : " ")
-                .font(.system(size: 12))
-                .foregroundColor(.red)
-            Button("Reset to Now") {
-                withAnimation(.easeOut(duration: 0.3)) {
-                    store.hourOffset = 0
-                }
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.small)
-            .disabled(store.hourOffset == 0)
-            .opacity(store.hourOffset != 0 ? 1 : 0.4)
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
-
         // Timezone list
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 0) {
@@ -83,19 +64,33 @@ struct ContentView: View {
         Divider()
 
         // Footer
-        HStack {
-            Button { showingAdd = true } label: {
-                Label("Add Timezone", systemImage: "plus")
-                    .font(.system(size: 12))
-            }
-            .buttonStyle(.borderless)
-            Spacer()
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
+        ZStack {
+            // Reset centered
+            Button("Reset") {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    store.hourOffset = 0
+                }
             }
             .buttonStyle(.borderless)
             .font(.system(size: 12))
-            .foregroundColor(.secondary)
+            .disabled(store.hourOffset == 0)
+            .opacity(store.hourOffset != 0 ? 1 : 0.4)
+
+            // Add left, Quit right
+            HStack {
+                Button { showingAdd = true } label: {
+                    Label("Add", systemImage: "plus")
+                        .font(.system(size: 12))
+                }
+                .buttonStyle(.borderless)
+                Spacer()
+                Button("Quit") {
+                    NSApplication.shared.terminate(nil)
+                }
+                .buttonStyle(.borderless)
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 6)

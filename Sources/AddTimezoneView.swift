@@ -7,6 +7,9 @@ struct AddTimezoneView: View {
 
     // (identifier, display label, search aliases)
     static let commonTimezones: [(String, String, [String])] = [
+        // UTC
+        ("UTC", "UTC", ["utc", "gmt", "coordinated universal time", "greenwich mean time"]),
+
         // Americas
         ("Pacific/Honolulu", "Honolulu, US", ["hawaii"]),
         ("America/Anchorage", "Anchorage, US", ["alaska"]),
