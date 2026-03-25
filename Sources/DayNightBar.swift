@@ -4,6 +4,7 @@ struct DayNightBar: View {
     let timeZone: TimeZone
     let selectedDate: Date
     @Binding var hourOffset: Double
+    @State private var lastTapTime: Date = .distantPast
 
     private let markerSize: CGFloat = 24
     private let totalHeight: CGFloat = 24
@@ -61,6 +62,20 @@ struct DayNightBar: View {
 
                         let diff = targetHour - currentHour
                         hourOffset = (diff * 60).rounded() / 60 // snap to 1 minute
+                    }
+                    .onEnded { value in
+                        let distance = sqrt(pow(value.translation.width, 2) + pow(value.translation.height, 2))
+                        if distance < 5 {
+                            let now = Date()
+                            if now.timeIntervalSince(lastTapTime) < 0.3 {
+                                withAnimation(.easeOut(duration: 0.3)) {
+                                    hourOffset = 0
+                                }
+                                lastTapTime = .distantPast
+                            } else {
+                                lastTapTime = now
+                            }
+                        }
                     }
             )
         }

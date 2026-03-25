@@ -14,7 +14,7 @@ struct TimezoneRowView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(timezone.label)
-                            .font(.system(size: 15, weight: isHighlighted ? .bold : .medium))
+                            .font(.system(size: 15, weight: .medium))
                     }
                     HStack(spacing: 4) {
                         Text(abbreviation)
@@ -39,15 +39,15 @@ struct TimezoneRowView: View {
                 Spacer()
                 HStack(spacing: 0) {
                     Text(timeHour)
-                        .font(.system(size: 24, weight: isHighlighted ? .bold : .medium, design: .rounded))
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
                         .monospacedDigit()
                     Text(":")
-                        .font(.system(size: 24, weight: isHighlighted ? .bold : .medium, design: .rounded))
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
                         .monospacedDigit()
                         .opacity(colonVisible ? 1 : 0.15)
                         .offset(y: -1.5)
                     Text(timeMinuteAndPeriod)
-                        .font(.system(size: 24, weight: isHighlighted ? .bold : .medium, design: .rounded))
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
                         .monospacedDigit()
                 }
             }
