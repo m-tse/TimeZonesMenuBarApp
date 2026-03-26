@@ -44,15 +44,15 @@ struct TimezoneRowView: View {
                 Spacer()
                 HStack(spacing: 0) {
                     Text(timeHour)
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .font(.system(size: 28, weight: .medium, design: .rounded))
                         .monospacedDigit()
                     Text(":")
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .font(.system(size: 28, weight: .medium, design: .rounded))
                         .monospacedDigit()
                         .opacity(colonVisible ? 1 : 0.15)
                         .offset(y: -1.5)
                     Text(timeMinuteAndPeriod)
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .font(.system(size: 28, weight: .medium, design: .rounded))
                         .monospacedDigit()
                 }
             }
