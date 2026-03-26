@@ -5,7 +5,7 @@
     <key>CFBundleIdentifier</key>
     <string>com.improvmx.worldclock</string>
     <key>CFBundleName</key>
-    <string>World Clock</string>
+    <string>Time Zones</string>
     <key>CFBundleExecutable</key>
     <string>WorldClock</string>
     <key>CFBundleVersion</key>

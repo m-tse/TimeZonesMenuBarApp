@@ -17,12 +17,12 @@ swiftc \
     Sources/*.swift
 
 echo "Creating app bundle..."
-rm -rf "World Clock.app"
-mkdir -p "World Clock.app/Contents/MacOS"
-mkdir -p "World Clock.app/Contents/Resources"
-cp WorldClock "World Clock.app/Contents/MacOS/"
-cp Info.plist "World Clock.app/Contents/"
+rm -rf "Time Zones.app"
+mkdir -p "Time Zones.app/Contents/MacOS"
+mkdir -p "Time Zones.app/Contents/Resources"
+cp WorldClock "Time Zones.app/Contents/MacOS/"
+cp Info.plist "Time Zones.app/Contents/"
 rm WorldClock
 
-echo "Built successfully: World Clock.app"
-echo "Run with: open 'World Clock.app'"
+echo "Built successfully: Time Zones.app"
+echo "Run with: open 'Time Zones.app'"
