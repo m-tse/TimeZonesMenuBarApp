@@ -22,22 +22,23 @@ A lightweight macOS menubar app for viewing multiple timezones at a glance. Insp
 - **Reset to Now** — one-click reset when you've scrubbed away from the current time
 - **Double-click reset** — double-click any timeline bar to reset to the current time
 
-## Requirements
+## Install
 
-- macOS 13.0 or later
-- Apple Silicon (arm64)
+### Homebrew
 
-## Build
+```bash
+brew tap m-tse/timezones
+brew install --cask timezones
+```
+
+The app is signed and notarized with an Apple Developer ID.
+
+### From source
+
+Requires macOS 13.0+, Apple Silicon (arm64), and Xcode command line tools.
 
 ```bash
 ./build.sh
-```
-
-This compiles the Swift source files and creates `Time Zones.app`.
-
-## Run
-
-```bash
 open 'Time Zones.app'
 ```
 
