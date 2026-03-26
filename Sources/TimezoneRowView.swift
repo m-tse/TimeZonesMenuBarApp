@@ -6,6 +6,7 @@ struct TimezoneRowView: View {
     let localTimeZone: TimeZone
     @Binding var hourOffset: Double
     var isHighlighted: Bool = false
+    var use24Hour: Bool = true
     var onDateTap: (() -> Void)? = nil
     @State private var colonVisible = true
 
@@ -82,14 +83,14 @@ struct TimezoneRowView: View {
 
     private var timeHour: String {
         let fmt = DateFormatter()
-        fmt.dateFormat = "HH"
+        fmt.dateFormat = use24Hour ? "HH" : "h"
         fmt.timeZone = timezone.timeZone
         return fmt.string(from: selectedDate)
     }
 
     private var timeMinuteAndPeriod: String {
         let fmt = DateFormatter()
-        fmt.dateFormat = "mm"
+        fmt.dateFormat = use24Hour ? "mm" : "mm a"
         fmt.timeZone = timezone.timeZone
         return fmt.string(from: selectedDate)
     }

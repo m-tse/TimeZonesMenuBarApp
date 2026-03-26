@@ -1,9 +1,11 @@
 import SwiftUI
+import ServiceManagement
 
 struct ContentView: View {
     @EnvironmentObject var store: TimezoneStore
     @State private var now = Date()
     @State private var showingAdd = false
+    @State private var showingSettings = false
     @State private var panelHeight: CGFloat = {
         let saved = UserDefaults.standard.double(forKey: "timezones_panelHeight")
         return CGFloat(saved > 0 ? saved : 500).clamped(min: 300, max: 900)
@@ -22,7 +24,9 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if showingAdd {
+            if showingSettings {
+                settingsView
+            } else if showingAdd {
                 AddTimezoneView(isShowing: $showingAdd)
                     .environmentObject(store)
             } else if showingDatePicker {
@@ -101,6 +105,57 @@ struct ContentView: View {
     }
 
     @ViewBuilder
+    var settingsView: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    showingSettings = false
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .font(.caption)
+                }
+                .buttonStyle(.borderless)
+                Spacer()
+                Text("Settings")
+                    .font(.headline)
+                Spacer()
+                Text("Back  ")
+                    .font(.caption)
+                    .hidden()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            VStack(spacing: 12) {
+                Toggle("24-hour time", isOn: $store.use24Hour)
+                    .toggleStyle(.switch)
+
+                Toggle("Launch on login", isOn: Binding(
+                    get: { SMAppService.mainApp.status == .enabled },
+                    set: { newValue in
+                        do {
+                            if newValue {
+                                try SMAppService.mainApp.register()
+                            } else {
+                                try SMAppService.mainApp.unregister()
+                            }
+                        } catch {
+                            // silently ignore
+                        }
+                    }
+                ))
+                .toggleStyle(.switch)
+            }
+            .padding(.horizontal, 16)
+
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
     var datePickerView: some View {
         VStack(spacing: 0) {
             HStack {
@@ -170,6 +225,7 @@ struct ContentView: View {
                         localTimeZone: store.referenceTimeZone,
                         hourOffset: $store.hourOffset,
                         isHighlighted: isReference,
+                        use24Hour: store.use24Hour,
                         onDateTap: {
                             pickerDate = selectedDate
                             showingDatePicker = true
@@ -218,6 +274,14 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderless)
                 Spacer()
+                Button {
+                    showingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 12))
+                }
+                .buttonStyle(.borderless)
+                .foregroundColor(.secondary)
                 Button("Quit") {
                     NSApplication.shared.terminate(nil)
                 }

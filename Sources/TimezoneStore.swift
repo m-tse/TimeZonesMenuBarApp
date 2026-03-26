@@ -14,6 +14,9 @@ class TimezoneStore: ObservableObject {
     @Published var timezones: [WorldTimezone] = []
     @Published var hourOffset: Double = 0
     @Published var referenceTimezoneId: String = TimeZone.current.identifier
+    @Published var use24Hour: Bool = UserDefaults.standard.object(forKey: "timezones_use24Hour") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(use24Hour, forKey: "timezones_use24Hour") }
+    }
 
     var referenceTimeZone: TimeZone {
         TimeZone(identifier: referenceTimezoneId) ?? .current
