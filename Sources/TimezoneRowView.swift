@@ -50,6 +50,7 @@ struct TimezoneRowView: View {
                         .font(.system(size: 28, weight: .medium, design: .rounded))
                         .monospacedDigit()
                         .opacity(colonVisible ? 1 : 0.15)
+                        .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: colonVisible)
                         .offset(y: -1.5)
                     Text(timeMinuteAndPeriod)
                         .font(.system(size: 28, weight: .medium, design: .rounded))
@@ -64,9 +65,7 @@ struct TimezoneRowView: View {
         .contentShape(Rectangle())
         .background(isHighlighted ? Color.accentColor.opacity(0.1) : Color.clear)
         .onAppear {
-            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                colonVisible = false
-            }
+            colonVisible = false
         }
     }
 

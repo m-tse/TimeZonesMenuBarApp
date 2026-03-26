@@ -1,69 +1,17 @@
 import SwiftUI
-import AppKit
 
 @main
 struct WorldClockApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var store = TimezoneStore()
 
     var body: some Scene {
-        Settings { EmptyView() }
-    }
-}
-
-class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
-    private var statusItem: NSStatusItem!
-    private var popover: NSPopover!
-    private let store = TimezoneStore()
-    private var isClosing = false
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        if let button = statusItem.button {
-            button.image = makeGlobeAltIcon()
-            button.action = #selector(togglePopover(_:))
-            button.target = self
+        MenuBarExtra {
+            ContentView()
+                .environmentObject(store)
+        } label: {
+            Image(nsImage: makeGlobeAltIcon())
         }
-
-        popover = NSPopover()
-        popover.contentSize = NSSize(width: 360, height: 500)
-        popover.behavior = .transient
-        popover.animates = false
-        popover.delegate = self
-
-        let contentView = ContentView()
-            .environmentObject(store)
-            .background(VisualEffectBackground())
-
-        popover.contentViewController = NSHostingController(rootView: contentView)
-    }
-
-    @objc func togglePopover(_ sender: AnyObject?) {
-        guard let button = statusItem.button else { return }
-        if popover.isShown {
-            fadeClosePopover()
-        } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKey()
-        }
-    }
-
-    func popoverShouldClose(_ popover: NSPopover) -> Bool {
-        if isClosing { return true }
-        fadeClosePopover()
-        return false
-    }
-
-    private func fadeClosePopover() {
-        guard !isClosing, let window = popover.contentViewController?.view.window else { return }
-        isClosing = true
-        NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.15
-            window.animator().alphaValue = 0
-        }, completionHandler: {
-            self.popover.performClose(nil)
-            window.alphaValue = 1
-            self.isClosing = false
-        })
+        .menuBarExtraStyle(.window)
     }
 
     private func makeGlobeAltIcon() -> NSImage {
