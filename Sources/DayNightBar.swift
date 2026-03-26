@@ -31,8 +31,7 @@ struct DayNightBar: View {
                 }
 
                 // Draggable marker circle
-                let pos = markerPosition(in: geo.size.width)
-                let clampedX = max(markerSize / 2, min(pos, geo.size.width - markerSize / 2))
+                let clampedX = markerPosition(in: geo.size.width)
                 ZStack {
                     Circle()
                         .fill(Color(white: 0.92))
