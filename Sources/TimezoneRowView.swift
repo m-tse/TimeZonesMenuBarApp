@@ -109,7 +109,7 @@ struct TimezoneRowView: View {
 
     private var formattedDate: String {
         let fmt = DateFormatter()
-        fmt.dateFormat = "MMM d"
+        fmt.dateFormat = "EEE MMM d"
         fmt.timeZone = timezone.timeZone
         return fmt.string(from: selectedDate)
     }
