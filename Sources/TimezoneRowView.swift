@@ -18,11 +18,8 @@ struct TimezoneRowView: View {
                         Text(timezone.label)
                             .font(.system(size: 15, weight: isHighlighted ? .bold : .medium))
                     }
-                    HStack(spacing: 4) {
+                    HStack(spacing: 10) {
                         Text(abbreviation)
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                        Text("·")
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                         Text(formattedDate)
@@ -33,9 +30,6 @@ struct TimezoneRowView: View {
                                 onDateTap?()
                             }
                         if hourDelta != 0 {
-                            Text("·")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
                             Text(hourDeltaLabel)
                                 .font(.system(size: 12))
                                 .foregroundColor(hourDelta > 0 ? Color(red: 0.0, green: 0.47, blue: 0.0) : Color(red: 0.78, green: 0.0, blue: 0.0))
