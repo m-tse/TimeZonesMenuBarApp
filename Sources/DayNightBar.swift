@@ -22,7 +22,7 @@ struct DayNightBar: View {
                     let tickH: CGFloat = isMajorMark ? 14 : (isHourMark ? 9 : 5)
                     let tickW: CGFloat = 1.0
                     let isDaytime = hour >= 6 && hour <= 18
-                    let tickColor = isDaytime ? Color.orange : Color(white: 0.4)
+                    let tickColor = isDaytime ? Color.orange : Color(nsColor: NSColor(name: nil, dynamicProvider: { $0.bestMatch(from: [.darkAqua]) == .darkAqua ? NSColor(white: 0.4, alpha: 1) : .black }))
 
                     Rectangle()
                         .fill(tickColor)
