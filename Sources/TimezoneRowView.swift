@@ -18,7 +18,7 @@ struct TimezoneRowView: View {
                         Text(timezone.label)
                             .font(.system(size: 15, weight: isHighlighted ? .bold : .medium))
                     }
-                    HStack(spacing: 10) {
+                    HStack(spacing: 8) {
                         Text(abbreviation)
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
