@@ -4,6 +4,12 @@ A lightweight macOS menubar app for viewing multiple timezones at a glance. Insp
 
 ![Screenshot](screenshot.png)
 
+## Why
+
+Most timezone apps just show you the current time in different cities. That's not very useful — you can Google that. What you actually need is to answer questions like "if I schedule a call for 3pm my time, what time is that for them?" or "what time was it in Tokyo when that incident fired at 2am?" This app lets you drag a time ruler and see all your cities update simultaneously, so you can scrub forward or backward through the day and instantly see the answer.
+
+It's also designed to be dead simple to read. Day and night hours are visually distinct, date changes are color-coded, and hour deltas are shown relative to whichever city you click — no mental math required.
+
 ## Features
 
 - **Menubar app** — lives in your menubar, one click to open
