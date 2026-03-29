@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var renameText = ""
     @State private var showingDatePicker = false
     @State private var pickerDate = Date()
+    @State private var pickerTimeZone = TimeZone.current
 
     let timer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
 
@@ -183,11 +184,27 @@ struct ContentView: View {
 
             DatePicker("", selection: $pickerDate, displayedComponents: .date)
                 .datePickerStyle(.graphical)
+                .environment(\.timeZone, pickerTimeZone)
                 .padding(.horizontal, 16)
                 .onChange(of: pickerDate) { newDate in
                     let now = Date()
-                    let diff = newDate.timeIntervalSince(now) / 3600.0
-                    store.hourOffset = (diff * 60).rounded() / 60
+                    var refCal = Calendar.current
+                    refCal.timeZone = pickerTimeZone
+                    // Picker returns date in reference tz; extract the date it shows
+                    let pickedComps = refCal.dateComponents([.year, .month, .day], from: newDate)
+                    // Preserve current time-of-day in the reference timezone
+                    let timeComps = refCal.dateComponents([.hour, .minute, .second], from: selectedDate)
+                    var target = DateComponents()
+                    target.year = pickedComps.year
+                    target.month = pickedComps.month
+                    target.day = pickedComps.day
+                    target.hour = timeComps.hour
+                    target.minute = timeComps.minute
+                    target.second = timeComps.second
+                    if let targetDate = refCal.date(from: target) {
+                        let diff = targetDate.timeIntervalSince(now) / 3600.0
+                        store.hourOffset = (diff * 60).rounded() / 60
+                    }
                 }
 
             HStack {
@@ -228,6 +245,7 @@ struct ContentView: View {
                         isHighlighted: isReference,
                         use24Hour: store.use24Hour,
                         onDateTap: {
+                            pickerTimeZone = tz.timeZone
                             pickerDate = selectedDate
                             showingDatePicker = true
                         }
