@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var renamingTimezone: WorldTimezone? = nil
     @State private var renameText = ""
     @State private var showingDatePicker = false
+    @State private var keyMonitor: Any?
     @State private var pickerDate = Date()
     @State private var pickerTimeZone = TimeZone.current
 
@@ -45,6 +46,28 @@ struct ContentView: View {
         }
         .onAppear {
             now = Date()
+            keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                guard !showingAdd && !showingSettings && !showingDatePicker && renamingTimezone == nil else {
+                    return event
+                }
+                let step = event.modifierFlags.contains(.shift) ? 1.0 : 1.0 / 60.0
+                switch event.keyCode {
+                case 123: // left arrow
+                    store.hourOffset -= step
+                    return nil
+                case 124: // right arrow
+                    store.hourOffset += step
+                    return nil
+                default:
+                    return event
+                }
+            }
+        }
+        .onDisappear {
+            if let monitor = keyMonitor {
+                NSEvent.removeMonitor(monitor)
+                keyMonitor = nil
+            }
         }
     }
 
