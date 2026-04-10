@@ -58,6 +58,12 @@ struct ContentView: View {
                 case 124: // right arrow
                     store.hourOffset += step
                     return nil
+                case 126: // up arrow
+                    selectAdjacentTimezone(offset: -1)
+                    return nil
+                case 125: // down arrow
+                    selectAdjacentTimezone(offset: 1)
+                    return nil
                 default:
                     return event
                 }
@@ -186,6 +192,7 @@ struct ContentView: View {
                 Text("\u{2022} Right-click on time zones to remove or rename them")
                 Text("\u{2022} Use \u{2190} \u{2192} arrow keys to move the slider by one minute")
                 Text("\u{2022} Hold Shift + \u{2190} \u{2192} to move by one hour")
+                Text("\u{2022} Use \u{2191} \u{2193} arrow keys to select the previous or next timezone")
                 Text("\u{2022} Double-click the slider to return to the current time")
                 Text("\u{2022} Click the date to open a calendar picker")
             }
@@ -360,6 +367,18 @@ struct ContentView: View {
             let newHeight = (panelHeight + delta).clamped(min: 300, max: 900)
             panelHeight = newHeight
             UserDefaults.standard.set(Double(newHeight), forKey: "timezones_panelHeight")
+        }
+    }
+
+    func selectAdjacentTimezone(offset: Int) {
+        let sorted = store.sortedTimezones(for: selectedDate)
+        guard !sorted.isEmpty else { return }
+        if let currentIdx = sorted.firstIndex(where: { $0.identifier == store.referenceTimezoneId }) {
+            let newIdx = currentIdx + offset
+            guard newIdx >= 0 && newIdx < sorted.count else { return }
+            store.referenceTimezoneId = sorted[newIdx].identifier
+        } else {
+            store.referenceTimezoneId = sorted[0].identifier
         }
     }
 
