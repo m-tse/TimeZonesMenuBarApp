@@ -330,41 +330,49 @@ struct ContentView: View {
         Divider()
 
         // Footer
-        ZStack {
-            // Reset centered
-            Button("Reset") {
+        VStack(spacing: 6) {
+            Button {
                 withAnimation(.easeOut(duration: 0.3)) {
                     store.hourOffset = 0
                 }
+            } label: {
+                Text("Reset")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(store.hourOffset != 0 ? .white : .secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
             }
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: store.hourOffset != 0 ? .bold : .regular))
-            .foregroundColor(store.hourOffset != 0 ? .orange : .secondary)
+            .buttonStyle(ResetButtonStyle(isActive: store.hourOffset != 0))
             .disabled(store.hourOffset == 0)
-            .opacity(store.hourOffset != 0 ? 1 : 0.4)
 
-            // Add left, Quit right
             HStack {
                 Button { showingAdd = true } label: {
                     Label("Add", systemImage: "plus")
+                        .labelStyle(TightLabelStyle())
                         .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(HoverHighlightStyle())
                 Spacer()
                 Button {
                     showingSettings = true
                 } label: {
-                    Image(systemName: "gearshape")
+                    Label("Settings", systemImage: "gearshape")
+                        .labelStyle(TightLabelStyle())
                         .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.borderless)
-                .foregroundColor(.secondary)
-                Button("Quit") {
+                .buttonStyle(HoverHighlightStyle())
+                Spacer()
+                Button {
                     NSApplication.shared.terminate(nil)
+                } label: {
+                    Label("Quit", systemImage: "power")
+                        .labelStyle(TightLabelStyle())
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                 }
-                .buttonStyle(.borderless)
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
+                .buttonStyle(HoverHighlightStyle())
             }
         }
         .padding(.horizontal, 16)
@@ -400,5 +408,52 @@ struct ContentView: View {
         } else {
             return "\(sign)\(h)h \(abs(m))m from now"
         }
+    }
+}
+
+struct ResetButtonStyle: ButtonStyle {
+    let isActive: Bool
+    @State private var isHovered = false
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(backgroundColor(pressed: configuration.isPressed))
+            )
+            .contentShape(Rectangle())
+            .onHover { isHovered = $0 }
+    }
+    private func backgroundColor(pressed: Bool) -> Color {
+        if !isActive {
+            return Color.primary.opacity(0.08)
+        }
+        if pressed { return Color.primary.opacity(0.26) }
+        if isHovered { return Color.primary.opacity(0.30) }
+        return Color.primary.opacity(0.23)
+    }
+}
+
+struct TightLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 3) {
+            configuration.icon
+            configuration.title
+        }
+    }
+}
+
+struct HoverHighlightStyle: ButtonStyle {
+    @State private var isHovered = false
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .background(
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(Color.primary.opacity(isHovered ? 0.12 : 0))
+            )
+            .contentShape(Rectangle())
+            .onHover { isHovered = $0 }
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
     }
 }
