@@ -198,7 +198,6 @@ struct AddTimezoneView: View {
                     }
                 }
             }
-            .frame(maxHeight: 380)
         }
     }
 }
