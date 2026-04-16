@@ -38,7 +38,13 @@ struct TimezoneRowView: View {
                 }
                 Spacer()
                 HStack(spacing: 0) {
-                    Text(timeHour)
+                    let firstDigit = String(timeHour.prefix(1))
+                    let restDigits = String(timeHour.dropFirst())
+                    Text(firstDigit)
+                        .font(.system(size: 30, weight: .medium, design: .rounded))
+                        .monospacedDigit()
+                        .opacity(!use24Hour && firstDigit == "0" ? 0 : 1)
+                    Text(restDigits)
                         .font(.system(size: 30, weight: .medium, design: .rounded))
                         .monospacedDigit()
                     Text(":")
@@ -78,7 +84,7 @@ struct TimezoneRowView: View {
 
     private var timeHour: String {
         let fmt = DateFormatter()
-        fmt.dateFormat = use24Hour ? "HH" : "h"
+        fmt.dateFormat = use24Hour ? "HH" : "hh"
         fmt.timeZone = timezone.timeZone
         return fmt.string(from: selectedDate)
     }
