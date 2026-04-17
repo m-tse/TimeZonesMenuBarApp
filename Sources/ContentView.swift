@@ -434,7 +434,7 @@ struct ContentView: View {
             } label: {
                 Text("Reset")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(store.hourOffset != 0 ? .white : .secondary)
+                    .foregroundColor(store.hourOffset != 0 ? .white : .secondary.opacity(0.35))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
             }
@@ -521,7 +521,7 @@ struct ResetButtonStyle: ButtonStyle {
     }
     private func backgroundColor(pressed: Bool) -> Color {
         if !isActive {
-            return Color.primary.opacity(0.08)
+            return Color.primary.opacity(0.025)
         }
         if pressed { return Color.primary.opacity(0.26) }
         if isHovered { return Color.primary.opacity(0.30) }
