@@ -33,8 +33,7 @@ It's also designed to be dead simple to read. Day and night hours are visually d
 ### Homebrew
 
 ```bash
-brew tap m-tse/timezones
-brew install --cask timezones
+brew install m-tse/timezones/timezones
 ```
 
 The app is signed and notarized with an Apple Developer ID.
