@@ -3,10 +3,48 @@ import SwiftUI
 struct WorldTimezone: Identifiable, Codable, Equatable {
     let identifier: String
     var label: String
+    var backgroundColorHex: String?
     var id: String { identifier }
 
     var timeZone: TimeZone {
         TimeZone(identifier: identifier) ?? .current
+    }
+
+    var backgroundColor: Color? {
+        guard let hex = backgroundColorHex else { return nil }
+        return Color(hex: hex)
+    }
+}
+
+extension Color {
+    init?(hex: String) {
+        var s = hex
+        if s.hasPrefix("#") { s.removeFirst() }
+        guard let val = UInt64(s, radix: 16) else { return nil }
+        switch s.count {
+        case 6:
+            let r = Double((val >> 16) & 0xff) / 255
+            let g = Double((val >> 8) & 0xff) / 255
+            let b = Double(val & 0xff) / 255
+            self = Color(.sRGB, red: r, green: g, blue: b, opacity: 1)
+        case 8:
+            let r = Double((val >> 24) & 0xff) / 255
+            let g = Double((val >> 16) & 0xff) / 255
+            let b = Double((val >> 8) & 0xff) / 255
+            let a = Double(val & 0xff) / 255
+            self = Color(.sRGB, red: r, green: g, blue: b, opacity: a)
+        default:
+            return nil
+        }
+    }
+
+    func toHexString() -> String? {
+        guard let c = NSColor(self).usingColorSpace(.sRGB) else { return nil }
+        let r = Int((c.redComponent * 255).rounded())
+        let g = Int((c.greenComponent * 255).rounded())
+        let b = Int((c.blueComponent * 255).rounded())
+        let a = Int((c.alphaComponent * 255).rounded())
+        return String(format: "#%02X%02X%02X%02X", r, g, b, a)
     }
 }
 
@@ -67,6 +105,13 @@ class TimezoneStore: ObservableObject {
     func rename(_ tz: WorldTimezone, to newLabel: String) {
         if let idx = timezones.firstIndex(where: { $0.identifier == tz.identifier }) {
             timezones[idx].label = newLabel
+            save()
+        }
+    }
+
+    func setBackgroundColor(_ tz: WorldTimezone, hex: String?) {
+        if let idx = timezones.firstIndex(where: { $0.identifier == tz.identifier }) {
+            timezones[idx].backgroundColorHex = hex
             save()
         }
     }

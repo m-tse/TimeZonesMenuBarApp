@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var isDragging = false
     @State private var renamingTimezone: WorldTimezone? = nil
     @State private var renameText = ""
+    @State private var colorPickingTimezone: WorldTimezone? = nil
+    @State private var pickerColor: Color = .white
     @State private var showingDatePicker = false
     @State private var keyMonitor: Any?
     @State private var pickerDate = Date()
@@ -35,6 +37,8 @@ struct ContentView: View {
                 datePickerView
             } else if let tz = renamingTimezone {
                 renameView(for: tz)
+            } else if let tz = colorPickingTimezone {
+                colorPickerView(for: tz)
             } else {
                 mainView
             }
@@ -47,7 +51,7 @@ struct ContentView: View {
         .onAppear {
             now = Date()
             keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                guard !showingAdd && !showingSettings && !showingDatePicker && renamingTimezone == nil else {
+                guard !showingAdd && !showingSettings && !showingDatePicker && renamingTimezone == nil && colorPickingTimezone == nil else {
                     return event
                 }
                 let modifiers = event.modifierFlags.intersection([.command, .control, .option])
@@ -82,6 +86,80 @@ struct ContentView: View {
                 NSEvent.removeMonitor(monitor)
                 keyMonitor = nil
             }
+        }
+    }
+
+    static let presetColors: [(name: String, hex: String)] = [
+        ("Red",    "#FFB3B3B3"),
+        ("Orange", "#FFD29EB3"),
+        ("Yellow", "#FFF6C9B3"),
+        ("Green",  "#B8E3B8B3"),
+        ("Teal",   "#B3E0E0B3"),
+        ("Blue",   "#B3CCFFB3"),
+        ("Purple", "#D9B3FFB3"),
+        ("Pink",   "#FFCCE6B3"),
+        ("Gray",   "#D9D9D9B3"),
+    ]
+
+    @ViewBuilder
+    func colorPickerView(for tz: WorldTimezone) -> some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    colorPickingTimezone = nil
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .font(.caption)
+                }
+                .buttonStyle(.borderless)
+                Spacer()
+                Text("Background Color")
+                    .font(.headline)
+                Spacer()
+                Text("Back  ")
+                    .font(.caption)
+                    .hidden()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            Text(tz.label)
+                .font(.system(size: 13))
+                .foregroundColor(.secondary)
+                .padding(.bottom, 12)
+
+            ColorPicker("Pick a color", selection: $pickerColor, supportsOpacity: true)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .onChange(of: pickerColor) { newColor in
+                    if let hex = newColor.toHexString() {
+                        store.setBackgroundColor(tz, hex: hex)
+                    }
+                }
+
+            HStack {
+                Button("Clear") {
+                    store.setBackgroundColor(tz, hex: nil)
+                    colorPickingTimezone = nil
+                }
+                .buttonStyle(.borderless)
+                .foregroundColor(.secondary)
+
+                Spacer()
+
+                Button("Done") {
+                    colorPickingTimezone = nil
+                }
+                .buttonStyle(.borderless)
+            }
+            .font(.system(size: 12))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
+
+            Spacer()
         }
     }
 
@@ -197,7 +275,7 @@ struct ContentView: View {
                 Text("Tips")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.secondary)
-                Text("\u{2022} Right-click on time zones to remove or rename them")
+                Text("\u{2022} Right-click on time zones to rename, recolor, or remove them")
                 Text("\u{2022} Use \u{2190} \u{2192} arrow keys to move the slider by one minute")
                 Text("\u{2022} Hold Shift + \u{2190} \u{2192} to move by one hour")
                 Text("\u{2022} Use \u{2191} \u{2193} arrow keys to select the previous or next timezone")
@@ -317,6 +395,24 @@ struct ContentView: View {
                         Button("Rename…") {
                             renameText = tz.label
                             renamingTimezone = tz
+                        }
+                        Menu("Background color") {
+                            ForEach(Self.presetColors, id: \.name) { preset in
+                                Button(preset.name) {
+                                    store.setBackgroundColor(tz, hex: preset.hex)
+                                }
+                            }
+                            Divider()
+                            Button("Custom…") {
+                                pickerColor = tz.backgroundColor ?? .white
+                                colorPickingTimezone = tz
+                            }
+                            if tz.backgroundColorHex != nil {
+                                Divider()
+                                Button("Clear color") {
+                                    store.setBackgroundColor(tz, hex: nil)
+                                }
+                            }
                         }
                         if tz.timeZone.identifier != TimeZone.current.identifier {
                             Button("Remove") { store.remove(tz) }

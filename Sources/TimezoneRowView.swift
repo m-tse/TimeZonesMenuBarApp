@@ -65,7 +65,16 @@ struct TimezoneRowView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .contentShape(Rectangle())
-        .background(isHighlighted ? Color.accentColor.opacity(0.1) : Color.clear)
+        .background(
+            ZStack {
+                if let custom = timezone.backgroundColor {
+                    custom
+                }
+                if isHighlighted {
+                    Color.accentColor.opacity(0.1)
+                }
+            }
+        )
         .onAppear {
             colonVisible = false
         }
