@@ -54,6 +54,10 @@ struct ContentView: View {
         .onAppear {
             now = Date()
             keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.keyCode == 53 { // escape
+                    (event.window ?? NSApp.keyWindow)?.orderOut(nil)
+                    return nil
+                }
                 guard !showingAdd && !showingSettings && !showingDatePicker && renamingTimezone == nil && colorPickingTimezone == nil && !pickingReferenceHighlight else {
                     return event
                 }
