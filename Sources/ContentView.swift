@@ -20,10 +20,8 @@ struct ContentView: View {
     @State private var keyMonitor: Any?
     @State private var pickerDate = Date()
     @State private var pickerTimeZone = TimeZone.current
-    @State private var colonVisible = true
 
     let timer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
-    let blinkTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var selectedDate: Date {
         now.addingTimeInterval(store.hourOffset * 3600)
@@ -50,9 +48,6 @@ struct ContentView: View {
         .background(Color(nsColor: .windowBackgroundColor).opacity(0.4))
         .onReceive(timer) { _ in
             now = Date()
-        }
-        .onReceive(blinkTimer) { _ in
-            colonVisible.toggle()
         }
         .onAppear {
             now = Date()
@@ -435,8 +430,7 @@ struct ContentView: View {
                         },
                         onRenameCancel: {
                             renamingTimezone = nil
-                        },
-                        colonVisible: colonVisible
+                        }
                     )
                     .onTapGesture {
                         store.referenceTimezoneId = tz.identifier
