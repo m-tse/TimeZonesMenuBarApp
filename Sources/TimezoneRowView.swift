@@ -13,7 +13,7 @@ struct TimezoneRowView: View {
     @Binding var renameText: String
     var onRenameCommit: (() -> Void)? = nil
     var onRenameCancel: (() -> Void)? = nil
-    @State private var colonVisible = true
+    var colonVisible: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -66,8 +66,10 @@ struct TimezoneRowView: View {
                     Text(":")
                         .font(.system(size: 30, weight: .medium, design: .rounded))
                         .monospacedDigit()
+                        // Discrete once-per-second toggle driven by ContentView's shared
+                        // timer. A repeatForever animation here forces the whole hosting
+                        // view to re-render every frame — even while the panel is closed.
                         .opacity(colonVisible ? 1 : 0.15)
-                        .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: colonVisible)
                         .offset(y: -1.5)
                     Text(timeMinuteAndPeriod)
                         .font(.system(size: 30, weight: .medium, design: .rounded))
@@ -91,9 +93,6 @@ struct TimezoneRowView: View {
                 }
             }
         )
-        .onAppear {
-            colonVisible = false
-        }
     }
 
     private var hourInTimezone: Int {
